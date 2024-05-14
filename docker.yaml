@@ -1,0 +1,47 @@
+version: '3.8'
+services:
+  product-page:
+    image: python:3.8-slim
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./product:/app
+    command: python /app/app.py
+
+  reviews-v1:
+    image: openjdk:11-jre-slim
+    volumes:
+      - ./reviews-v1:/app
+    command: java -jar /app/app.jar
+
+  reviews-v2:
+    image: openjdk:11-jre-slim
+    volumes:
+      - ./reviews-v2:/app
+    command: java -jar /app/app.jar
+
+  reviews-v3:
+    image: openjdk:11-jre-slim
+    volumes:
+      - ./reviews-v3:/app
+    command: java -jar /app/app.jar
+
+  ratings:
+    image: node:14-alpine
+    volumes:
+      - ./ratings:/app
+    command: node /app/server.js
+
+  details:
+    image: ruby:2.7-slim
+    volumes:
+      - ./details:/app
+    command: ruby /app/server.rb
+
+  locust:
+    image: locustio/locust
+    ports:
+      - "8089:8089"
+    volumes:
+      - ./locustfile:/mnt/locust
+    command: locust -f /mnt/locust/locustfile.py --host=http://product-page:5000
